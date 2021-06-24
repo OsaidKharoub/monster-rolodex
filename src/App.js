@@ -1,25 +1,43 @@
-import logo from './logo.svg';
+import {Component} from 'react';
 import './App.css';
+import axios from 'axios';
+import Card from './component/card/card';
+import SearchBox from './component/search/searchbox'
 
-function App() {
+class App extends Component {
+
+  constructor(){
+    super();
+    this.state = {
+      monsters : [],
+      searchFiled : ''
+       
+    }
+  }
+
+  componentDidMount(){
+    axios.get("https://jsonplaceholder.typicode.com/users/")
+    .then(users => this.setState({monsters:users.data}));
+  
+  }
+  
+filter = (e) => {
+  const value =  e.target.value;
+  this.setState({searchFiled : value}) 
+  }
+
+  render(){
+
+    const {monsters , searchFiled} = this.state ;
+    const MonsterFilter = this.state.monsters.filter(monst => monst.name.toLowerCase().includes( searchFiled.toLowerCase() ));
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <h1  className ="title">monsters rolodex</h1>
+    <SearchBox  monsters = {this.state.monsters} filter ={this.filter}/>
+    <Card monsters = {MonsterFilter}/>
     </div>
   );
-}
+}}
 
 export default App;
